@@ -3,6 +3,8 @@ package com.ll.simpleDb;
 import com.ll.SimpleDb;
 import org.junit.jupiter.api.*;
 
+import java.util.stream.IntStream;
+
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class SimpleDbTest {
     private static SimpleDb simpleDb;
@@ -12,6 +14,12 @@ public class SimpleDbTest {
         simpleDb = new SimpleDb("localhost", "root", "lldj123414", "simpleDb__test");
 
         createArticleTable();
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        truncateArticleTable();
+        makeArticleTestData();
     }
 
     private static void createArticleTable() {
@@ -28,6 +36,27 @@ public class SimpleDbTest {
                     isBlind BIT(1) NOT NULL DEFAULT 0
                 )
                 """);
+    }
+
+    private void makeArticleTestData() {
+        IntStream.rangeClosed(1, 6).forEach(no -> {
+            boolean isBlind = no > 3;
+            String title = "제목%d".formatted(no);
+            String body = "내용%d".formatted(no);
+
+            simpleDb.run("""
+                    INSERT INTO article
+                    SET createdDate = NOW(),
+                    modifiedDate = NOW(),
+                    title = ?,
+                    `body` = ?,
+                    isBlind = ?
+                    """, title, body, isBlind);
+        });
+    }
+
+    private void truncateArticleTable() {
+        simpleDb.run("TRUNCATE article");
     }
 
     @Test
