@@ -1,9 +1,13 @@
 package com.ll.simpleDb;
 
 import com.ll.SimpleDb;
+import com.ll.Sql;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 
 import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class SimpleDbTest {
